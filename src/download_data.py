@@ -9,7 +9,7 @@ Usage:
 
     # Then run:
     python src/download_data.py --output_dir data/wiki
-    python src/download_data.py --output_dir data/wiki --english_only
+    python src/download_data.py --output_dir data/wiki
 """
 
 import os
@@ -23,15 +23,56 @@ SNAPSHOT = "20231101"
 # Total ~20M chars. English-heavy, with coverage of major scripts.
 # Using newer "wikimedia/wikipedia" dataset with recent snapshot date
 LANGUAGE_CONFIGS = {
-    "en": (f"{SNAPSHOT}.en", 14_000_000),  # 70% - Latin script
-    "es": (f"{SNAPSHOT}.es", 1_000_000),  #  5% - Latin script
-    "fr": (f"{SNAPSHOT}.fr", 800_000),  #  4% - Latin + accents
-    "de": (f"{SNAPSHOT}.de", 800_000),  #  4% - Latin + umlauts
-    "ru": (f"{SNAPSHOT}.ru", 1_000_000),  #  5% - Cyrillic
-    "zh": (f"{SNAPSHOT}.zh", 1_000_000),  #  5% - CJK
-    "ja": (f"{SNAPSHOT}.ja", 600_000),  #  3% - Hiragana/Katakana/CJK
-    "ar": (f"{SNAPSHOT}.ar", 400_000),  #  2% - Arabic script
-    "ko": (f"{SNAPSHOT}.ko", 400_000),  #  2% - Hangul
+    "en": (f"{SNAPSHOT}.en", 20_000_000),
+    "ceb": (f"{SNAPSHOT}.ceb", 5_000_000),
+    "de": (f"{SNAPSHOT}.de", 5_000_000),
+    "fr": (f"{SNAPSHOT}.fr", 5_000_000),
+    "sv": (f"{SNAPSHOT}.sv", 5_000_000),
+    "nl": (f"{SNAPSHOT}.nl", 5_000_000),
+    "es": (f"{SNAPSHOT}.es", 5_000_000),
+    "ru": (f"{SNAPSHOT}.ru", 5_000_000),
+    "it": (f"{SNAPSHOT}.it", 5_000_000),
+    "pl": (f"{SNAPSHOT}.pl", 5_000_000),
+    "arz": (f"{SNAPSHOT}.arz", 5_000_000),
+    "zh": (f"{SNAPSHOT}.zh", 5_000_000),
+    "ja": (f"{SNAPSHOT}.ja", 5_000_000),
+    "uk": (f"{SNAPSHOT}.uk", 5_000_000),
+    "ar": (f"{SNAPSHOT}.ar", 5_000_000),
+    "vi": (f"{SNAPSHOT}.vi", 5_000_000),
+    "war": (f"{SNAPSHOT}.war", 5_000_000),
+    "pt": (f"{SNAPSHOT}.pt", 5_000_000),
+    "fa": (f"{SNAPSHOT}.fa", 5_000_000),
+    "ce": (f"{SNAPSHOT}.ce", 5_000_000),
+    "ca": (f"{SNAPSHOT}.ca", 5_000_000),
+    "id": (f"{SNAPSHOT}.id", 5_000_000),
+    "ko": (f"{SNAPSHOT}.ko", 5_000_000),
+    "sr": (f"{SNAPSHOT}.sr", 5_000_000),
+    "no": (f"{SNAPSHOT}.no", 5_000_000),
+    "tr": (f"{SNAPSHOT}.tr", 5_000_000),
+    "fi": (f"{SNAPSHOT}.fi", 5_000_000),
+    "tt": (f"{SNAPSHOT}.tt", 5_000_000),
+    "cs": (f"{SNAPSHOT}.cs", 5_000_000),
+    "hu": (f"{SNAPSHOT}.hu", 5_000_000),
+    "ro": (f"{SNAPSHOT}.ro", 5_000_000),
+    "eu": (f"{SNAPSHOT}.eu", 5_000_000),
+    "sh": (f"{SNAPSHOT}.sh", 5_000_000),
+    "ms": (f"{SNAPSHOT}.ms", 5_000_000),
+    "zh-min-nan": (f"{SNAPSHOT}.zh-min-nan", 5_000_000),
+    "he": (f"{SNAPSHOT}.he", 5_000_000),
+    "eo": (f"{SNAPSHOT}.eo", 5_000_000),
+    "uz": (f"{SNAPSHOT}.uz", 5_000_000),
+    "hy": (f"{SNAPSHOT}.hy", 5_000_000),
+    "da": (f"{SNAPSHOT}.da", 5_000_000),
+    "bg": (f"{SNAPSHOT}.bg", 5_000_000),
+    "cy": (f"{SNAPSHOT}.cy", 5_000_000),
+    "simple": (f"{SNAPSHOT}.simple", 5_000_000),
+    "el": (f"{SNAPSHOT}.el", 5_000_000),
+    "be": (f"{SNAPSHOT}.be", 5_000_000),
+    "sk": (f"{SNAPSHOT}.sk", 5_000_000),
+    "et": (f"{SNAPSHOT}.et", 5_000_000),
+    "azb": (f"{SNAPSHOT}.azb", 5_000_000),
+    "kk": (f"{SNAPSHOT}.kk", 5_000_000),
+    "ur": (f"{SNAPSHOT}.ur", 5_000_000),
 }
 
 
@@ -87,34 +128,16 @@ def download_language(lang, wiki_id, target_chars, output_dir):
         return False
 
 
-def main():
-    parser = argparse.ArgumentParser(
-        description="Download Wikipedia text for n-gram training"
-    )
-    parser.add_argument(
-        "--output_dir",
-        default="data/wiki",
-        help="Directory to save downloaded text files",
-    )
-    parser.add_argument(
-        "--english_only",
-        action="store_true",
-        help="Only download English (faster for testing)",
-    )
-    args = parser.parse_args()
+def download_all(output_dir):
+    os.makedirs(output_dir, exist_ok=True)
 
-    os.makedirs(args.output_dir, exist_ok=True)
-
-    if args.english_only:
-        configs = {"en": LANGUAGE_CONFIGS["en"]}
-    else:
-        configs = LANGUAGE_CONFIGS
+    configs = LANGUAGE_CONFIGS
 
     start = time.time()
     results = {}
 
     for lang, (wiki_id, target_chars) in configs.items():
-        success = download_language(lang, wiki_id, target_chars, args.output_dir)
+        success = download_language(lang, wiki_id, target_chars, output_dir)
         results[lang] = success
 
     elapsed = time.time() - start
@@ -125,7 +148,7 @@ def main():
     print("=" * 50)
     for lang, success in results.items():
         status = "OK" if success else "FAILED"
-        filepath = os.path.join(args.output_dir, f"{lang}.txt")
+        filepath = os.path.join(output_dir, f"{lang}.txt")
         if success and os.path.exists(filepath):
             size_mb = os.path.getsize(filepath) / (1024 * 1024)
             print(f"  {lang}: {status} ({size_mb:.1f} MB)")
@@ -133,7 +156,22 @@ def main():
             print(f"  {lang}: {status}")
 
     print(f"\nTotal time: {elapsed:.1f}s ({elapsed / 60:.1f}m)")
-    print(f"Files saved to: {args.output_dir}/")
+    print(f"Files saved to: {output_dir}/")
+
+
+def main(output_dir=None):
+    parser = argparse.ArgumentParser(
+        description="Download Wikipedia text for n-gram training"
+    )
+    parser.add_argument(
+        "--output_dir",
+        default="data/wiki",
+        help="Directory to save downloaded text files",
+    )
+    args = parser.parse_args()
+
+    resolved_output_dir = args.output_dir if output_dir is None else output_dir
+    download_all(resolved_output_dir)
 
 
 if __name__ == "__main__":

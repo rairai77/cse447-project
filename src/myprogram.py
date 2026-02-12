@@ -135,7 +135,7 @@ class MyModel:
         return order_model
 
     def run_train(self, text, work_dir, max_order=MAX_ORDER, min_counts=MIN_COUNTS):
-        """Full training pipeline: count n-grams → prune → save."""
+        """Full training pipeline: count n-grams -> prune -> save."""
         # Step 1: Build model (one order at a time to control memory)
         print("=" * 60)
         print("STEP 2: Building n-gram model")

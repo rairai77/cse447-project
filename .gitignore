@@ -2,3 +2,6 @@
 output/
 submit/
 submit.zip
+.DS_Store
+venv
+pred.txt
