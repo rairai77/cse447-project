@@ -28,6 +28,7 @@ class MyModel:
     """
     Character n-gram model with backoff for next-character prediction.
     """
+    INVALID_PRED_CHARS = {"\n", "\r"}
 
     def __init__(self, ngram_model=None):
         """Initialize with n-gram model dictionary."""
@@ -170,36 +171,52 @@ class MyModel:
         # Lowercase input (grader is case-insensitive)
         text = text.lower()
 
-        # Try backoff from highest order to lowest
+        # Collect candidates from highest-order context first, then lower orders.
+        # This keeps specific context preferences while filling missing slots via backoff.
+        candidates = []
+        seen = set()
+
         for order in range(self.max_order, 0, -1):
             if order not in self.model:
                 continue
 
-            # Context length = order - 1
             context_len = order - 1
             if len(text) < context_len:
                 continue
 
-            # Extract context (last N characters)
             context = text[-context_len:] if context_len > 0 else ""
+            predictions = self.model[order].get(context)
+            if not predictions:
+                continue
 
-            # Look up in model
-            if context in self.model[order]:
-                predictions = self.model[order][context]
-                # Ensure we return exactly 3 characters (pad if needed)
-                if len(predictions) >= 3:
-                    return predictions[:3]
-                # If we have fewer than 3, pad with fallback
-                fallback = self._get_fallback()
-                return (predictions + fallback)[:3]
+            for ch in predictions:
+                if ch in self.INVALID_PRED_CHARS:
+                    continue
+                if ch not in seen:
+                    seen.add(ch)
+                    candidates.append(ch)
+                    if len(candidates) == 3:
+                        return "".join(candidates)
 
-        # Fallback: use unconditional top-3
-        return self._get_fallback()
+        # Last resort: fill any remaining slots from global unigram fallback.
+        for ch in self._get_fallback():
+            if ch in self.INVALID_PRED_CHARS:
+                continue
+            if ch not in seen:
+                seen.add(ch)
+                candidates.append(ch)
+                if len(candidates) == 3:
+                    return "".join(candidates)
+
+        # Extremely defensive: keep output length exactly 3 even in degenerate cases.
+        return ("".join(candidates) + " et")[:3]
 
     def _get_fallback(self):
         """Get fallback prediction (unigram top-3)."""
         if 1 in self.model and "" in self.model[1]:
-            fallback = self.model[1][""]
+            fallback = "".join(
+                ch for ch in self.model[1][""] if ch not in self.INVALID_PRED_CHARS
+            )
             # Ensure exactly 3 characters
             if len(fallback) >= 3:
                 return fallback[:3]
@@ -308,3 +325,4 @@ if __name__ == "__main__":
         model.write_pred(pred, args.test_output)
     else:
         raise NotImplementedError("Unknown mode {}".format(args.mode))
+    INVALID_PRED_CHARS = {"\n", "\r"}

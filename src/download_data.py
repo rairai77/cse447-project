@@ -66,7 +66,6 @@ LANGUAGE_CONFIGS = {
     "da": (f"{SNAPSHOT}.da", 5_000_000),
     "bg": (f"{SNAPSHOT}.bg", 5_000_000),
     "cy": (f"{SNAPSHOT}.cy", 5_000_000),
-    "simple": (f"{SNAPSHOT}.simple", 5_000_000),
     "el": (f"{SNAPSHOT}.el", 5_000_000),
     "be": (f"{SNAPSHOT}.be", 5_000_000),
     "sk": (f"{SNAPSHOT}.sk", 5_000_000),

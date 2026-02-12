@@ -7,3 +7,6 @@ venv
 pred.txt
 pyproject.toml
 .python-version
+data
+uv.lock
+work/*.pkl
