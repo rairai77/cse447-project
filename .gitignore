@@ -9,4 +9,3 @@ pyproject.toml
 .python-version
 data
 uv.lock
-work/*.pkl
