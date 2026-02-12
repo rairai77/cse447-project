@@ -15,6 +15,7 @@ Usage:
 import os
 import argparse
 import time
+from datasets import load_dataset
 
 # Snapshot date - using November 2023 which should be available for all languages
 SNAPSHOT = "20231101"
@@ -78,13 +79,6 @@ LANGUAGE_CONFIGS = {
 
 def download_language(lang, wiki_id, target_chars, output_dir):
     """Download text for one language and save to a file."""
-    try:
-        from datasets import load_dataset
-    except ImportError:
-        print(f"[{lang}] FAILED: datasets library not installed.")
-        print("  Install with: pip install datasets")
-        return False
-
     output_path = os.path.join(output_dir, f"{lang}.txt")
     print(f"[{lang}] Downloading (target: {target_chars:,} chars)...")
 
