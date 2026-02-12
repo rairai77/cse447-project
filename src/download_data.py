@@ -4,8 +4,8 @@ Download multilingual Wikipedia text for n-gram training.
 Streams articles and saves lowercased plain text to disk.
 
 Usage:
-    # First, install compatible datasets version:
-    pip install "datasets<3.0.0"
+    # Install datasets library:
+    pip install datasets
 
     # Then run:
     python src/download_data.py --output_dir data/wiki
@@ -16,18 +16,22 @@ import os
 import argparse
 import time
 
+# Snapshot date - using November 2023 which should be available for all languages
+SNAPSHOT = "20231101"
+
 # Language configs: (huggingface_wiki_config, target_num_chars)
 # Total ~20M chars. English-heavy, with coverage of major scripts.
+# Using newer "wikimedia/wikipedia" dataset with recent snapshot date
 LANGUAGE_CONFIGS = {
-    "en": ("20220301.en", 14_000_000),  # 70% - Latin script
-    "es": ("20220301.es", 1_000_000),  #  5% - Latin script
-    "fr": ("20220301.fr", 800_000),  #  4% - Latin + accents
-    "de": ("20220301.de", 800_000),  #  4% - Latin + umlauts
-    "ru": ("20220301.ru", 1_000_000),  #  5% - Cyrillic
-    "zh": ("20220301.zh", 1_000_000),  #  5% - CJK
-    "ja": ("20220301.ja", 600_000),  #  3% - Hiragana/Katakana/CJK
-    "ar": ("20220301.ar", 400_000),  #  2% - Arabic script
-    "ko": ("20220301.ko", 400_000),  #  2% - Hangul
+    "en": (f"{SNAPSHOT}.en", 14_000_000),  # 70% - Latin script
+    "es": (f"{SNAPSHOT}.es", 1_000_000),  #  5% - Latin script
+    "fr": (f"{SNAPSHOT}.fr", 800_000),  #  4% - Latin + accents
+    "de": (f"{SNAPSHOT}.de", 800_000),  #  4% - Latin + umlauts
+    "ru": (f"{SNAPSHOT}.ru", 1_000_000),  #  5% - Cyrillic
+    "zh": (f"{SNAPSHOT}.zh", 1_000_000),  #  5% - CJK
+    "ja": (f"{SNAPSHOT}.ja", 600_000),  #  3% - Hiragana/Katakana/CJK
+    "ar": (f"{SNAPSHOT}.ar", 400_000),  #  2% - Arabic script
+    "ko": (f"{SNAPSHOT}.ko", 400_000),  #  2% - Hangul
 }
 
 
@@ -37,20 +41,19 @@ def download_language(lang, wiki_id, target_chars, output_dir):
         from datasets import load_dataset
     except ImportError:
         print(f"[{lang}] FAILED: datasets library not installed.")
-        print("  Install with: pip install 'datasets<3.0.0'")
+        print("  Install with: pip install datasets")
         return False
 
     output_path = os.path.join(output_dir, f"{lang}.txt")
     print(f"[{lang}] Downloading (target: {target_chars:,} chars)...")
 
     try:
-        # Use trust_remote_code for older datasets versions (<3.0.0)
+        # Use newer "wikimedia/wikipedia" dataset
         ds = load_dataset(
-            "wikipedia",
+            "wikimedia/wikipedia",
             wiki_id,
             split="train",
             streaming=True,
-            trust_remote_code=True,
         )
 
         chars_collected = 0
