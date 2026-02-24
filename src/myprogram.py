@@ -10,7 +10,7 @@ from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 # Training Configuration
 # ============================================================
 
-MAX_ORDER = 10  # Up to 10-grams (9 chars of context → predict 10th)
+MAX_ORDER = 9  # Up to 10-grams (9 chars of context → predict 10th)
 
 # Minimum count thresholds per order
 MIN_COUNTS = {

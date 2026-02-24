@@ -87,7 +87,6 @@ LANGUAGE_CONFIGS = {
     "am": (f"{SNAPSHOT}.am", 10_000_000),
     "yo": (f"{SNAPSHOT}.yo", 10_000_000),
     "ha": (f"{SNAPSHOT}.ha", 10_000_000),
-    "yue": (f"{SNAPSHOT}.yue", 10_000_000),
 }
 
 token = os.getenv("HF_TOKEN")
