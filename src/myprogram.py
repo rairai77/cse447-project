@@ -10,7 +10,7 @@ from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 # Training Configuration
 # ============================================================
 
-MAX_ORDER = 7  # Up to 7-grams (6 chars of context → predict 7th)
+MAX_ORDER = 10  # Up to 10-grams (9 chars of context → predict 10th)
 
 # Minimum count thresholds per order
 MIN_COUNTS = {
@@ -21,6 +21,9 @@ MIN_COUNTS = {
     5: 3,
     6: 3,
     7: 3,
+    8: 2,
+    9: 2,
+    10: 1,
 }
 
 
@@ -28,6 +31,7 @@ class MyModel:
     """
     Character n-gram model with backoff for next-character prediction.
     """
+
     INVALID_PRED_CHARS = {"\n", "\r"}
 
     def __init__(self, ngram_model=None):
