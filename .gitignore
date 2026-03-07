@@ -10,3 +10,8 @@ pyproject.toml
 data
 uv.lock
 work_old
+Project447Group1.zip
+work/ngram_model.db-shm
+work/ngram_model.db-wal
+
+work/ngram_model.db
