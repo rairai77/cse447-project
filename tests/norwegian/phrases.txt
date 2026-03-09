@@ -1,0 +1,101 @@
+God morgen
+God dag
+God kveld
+God natt
+Hei
+Hallo
+Hvordan har du det
+Hvordan går det
+Hvordan har dere det
+Tusen takk
+Takk for hjelpen
+Vær så god
+Unnskyld
+Beklager
+Det gjør ingenting
+Ingen årsak
+Hyggelig å møte deg
+Hyggelig å møte dere
+Ha det
+Vi sees
+Vi sees senere
+Hva heter du
+Jeg heter Anna
+Jeg heter Erik
+Hvor kommer du fra
+Jeg kommer fra Norge
+Hyggelig å treffe deg
+Snakker du engelsk?
+Jeg forstår ikke
+Jeg forstår
+Kan du gjenta det?
+Snakk saktere, vær så snill
+Hva betyr dette?
+Hvor mye koster det?
+Kan jeg betale med kort?
+Hvor er toalettet?
+Hvor er bussholdeplassen?
+Hvor er togstasjonen?
+Hvordan kommer jeg til sentrum?
+Er det langt?
+Hva er klokka?
+Kan du hjelpe meg?
+Jeg trenger hjelp
+Jeg har gått meg vill
+Kan du vise på kartet?
+Er denne plassen ledig?
+Kan jeg sitte her?
+Er det Wi-Fi her?
+Hva er Wi-Fi passordet?
+Jeg vil gjerne ha en kaffe
+Jeg vil gjerne ha en te
+Jeg vil gjerne ha vann
+Kan jeg få menyen?
+Kan jeg få regningen?
+Dette er veldig godt
+Jeg spiser ikke kjøtt
+Jeg er allergisk mot nøtter
+Er det sterkt?
+Har dere noe vegetarisk?
+Kan jeg reservere et bord?
+Hva tid er reservasjonen?
+Jeg har en reservasjon
+Jeg vil gjerne ha et rom for én natt
+Jeg vil gjerne ha et rom for to netter
+Er frokost inkludert?
+Kan jeg betale nå?
+Kan jeg betale senere?
+Jeg trenger en taxi
+Stopp her, vær så snill
+Kjør rett fram
+Sving til venstre
+Sving til høyre
+Hvor lang tid tar turen?
+Er det kø på veien?
+Kan jeg få kvittering?
+Kan jeg få faktura?
+Kan jeg prøve dette?
+Kan jeg prøve dette på?
+Har dere en annen størrelse?
+Har dere en annen farge?
+Dette er for dyrt
+Kan du gi rabatt?
+Jeg tar dette
+Jeg tar ikke dette
+Dette ser bra ut
+Dette er veldig fint
+Jeg liker dette
+Dette er ikke for meg
+Jeg må gå nå
+Vi sees senere
+Ha en fin dag
+Ha en fin kveld
+Vel bekomme
+Skål
+Lykke til
+Gratulerer
+Alt godt
+Ta vare på deg selv
+God helg
+Takk for alt
+Ikke bekymre deg

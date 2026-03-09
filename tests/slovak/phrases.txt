@@ -1,0 +1,100 @@
+Dobré ráno
+Dobrý deň
+Dobrý večer
+Dobrú noc
+Ahoj
+Čau
+Ako sa máš?
+Ako sa máte?
+Ďakujem veľmi pekne
+Ďakujem za pomoc
+Niet začo
+Prepáč
+Je mi ľúto
+To nič nie je
+Nemáš za čo
+Rád vás spoznávam
+Rád vás spoznávam (formálne)
+Dovidenia
+Zbohom
+Uvidíme sa neskôr
+Ako sa voláš?
+Volám sa Anna
+Volám sa Peter
+Odkiaľ si?
+Som zo Slovenska
+Rád vás spoznávam
+Hovoríš po anglicky?
+Nerozumiem
+Rozumiem
+Môžeš to zopakovať?
+Hovorte pomalšie, prosím
+Čo to znamená?
+Koľko to stojí?
+Môžem zaplatiť kartou?
+Kde je toaleta?
+Kde je autobusová zastávka?
+Kde je vlaková stanica?
+Ako sa dostanem do centra?
+Je to ďaleko?
+Koľko je hodín?
+Môžeš mi pomôcť?
+Potrebujem pomoc
+Zablúdil som
+Môžeš mi ukázať na mape?
+Je toto miesto voľné?
+Môžem tu sedieť?
+Je tu Wi-Fi?
+Aké je heslo Wi-Fi?
+Chcel by som kávu
+Chcel by som čaj
+Chcel by som vodu
+Môžem dostať jedálny lístok?
+Môžem dostať účet?
+Je to veľmi chutné
+Nejem mäso
+Som alergický na orechy
+Je to pikantné?
+Máte niečo vegetariánske?
+Môžem si rezervovať stôl?
+O koľkej je rezervácia?
+Mám rezerváciu
+Chcel by som izbu na jednu noc
+Chcel by som izbu na dve noci
+Je raňajky zahrnuté?
+Môžem zaplatiť teraz?
+Môžem zaplatiť neskôr?
+Potrebujem taxík
+Zastavte tu, prosím
+Choďte rovno
+Odbočte doľava
+Odbočte doprava
+Ako dlho trvá cesta?
+Je na ceste zápcha?
+Môžem dostať účtenku?
+Môžem dostať faktúru?
+Môžem to skúsiť?
+Môžem si to skúsiť na seba?
+Máte inú veľkosť?
+Máte inú farbu?
+Je to príliš drahé
+Môžete dať zľavu?
+Beriem to
+Neberiem to
+Vyzerá to dobre
+Je to veľmi pekné
+Veľmi sa mi to páči
+Nie je to pre mňa
+Musím ísť teraz
+Uvidíme sa neskôr
+Prajem pekný deň
+Prajem pekný večer
+Dobrú chuť
+Na zdravie
+Veľa šťastia
+Blahoželám
+Všetko najlepšie
+Dávaj na seba pozor
+Pekný víkend
+Ďakujem za všetko
+Nerob si starosti

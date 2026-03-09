@@ -1,0 +1,105 @@
+Dobro jutro
+Dobar dan
+Dobro veče
+Laku noć
+Zdravo
+Ćao
+Kako si?
+Kako ste?
+Hvala
+Hvala puno
+Hvala na pomoći
+Nema na čemu
+Izvini
+Oprostite
+Žao mi je
+Nema problema
+Ne brini
+Drago mi je
+Drago mi je da smo se upoznali
+Doviđenja
+Vidimo se
+Vidimo se kasnije
+Kako se zoveš?
+Zovem se Ana
+Zovem se Marko
+Odakle si?
+Ja sam iz Bosne
+Ja sam iz Hrvatske
+Ja sam iz Srbije
+Da li govoriš engleski?
+Ne govorim engleski
+Možeš li ponoviti?
+Govori sporije, molim
+Šta to znači?
+Koliko košta?
+Mogu li platiti karticom?
+Gdje je toalet?
+Gdje je autobuska stanica?
+Gdje je željeznička stanica?
+Kako da dođem do centra?
+Da li je daleko?
+Koliko je sati?
+Možeš li mi pomoći?
+Treba mi pomoć
+Izgubio sam se
+Možeš li pokazati na mapi?
+Da li je ovo mjesto slobodno?
+Mogu li sjesti ovdje?
+Ima li Wi-Fi?
+Koja je Wi-Fi lozinka?
+Želim kafu
+Želim čaj
+Želim vodu
+Mogu li vidjeti meni?
+Mogu li dobiti račun?
+Ovo je veoma ukusno
+Ne jedem meso
+Imam alergiju na orahe
+Da li je ovo ljuto?
+Imate li vegetarijansku hranu?
+Mogu li rezervisati sto?
+U koliko sati je rezervacija?
+Imam rezervaciju
+Želim sobu za jednu noć
+Želim sobu za dvije noći
+Da li je doručak uključen?
+Mogu li platiti sada?
+Mogu li platiti kasnije?
+Treba mi taksi
+Zaustavite ovdje, molim
+Idite pravo
+Skrenite lijevo
+Skrenite desno
+Koliko traje putovanje?
+Da li ima gužve u saobraćaju?
+Mogu li dobiti potvrdu?
+Mogu li dobiti račun za firmu?
+Mogu li probati ovo?
+Mogu li probati ovo obući?
+Imate li drugu veličinu?
+Imate li drugu boju?
+Ovo je preskupo
+Može li popust?
+Uzeću ovo
+Neću ovo uzeti
+Ovo izgleda dobro
+Ovo je vrlo lijepo
+Sviđa mi se
+Ovo nije za mene
+Moram ići sada
+Vidimo se kasnije
+Prijatan dan
+Prijatno veče
+Prijatno
+Živjeli
+Sretno
+Čestitam
+Sve najbolje
+Čuvaj se
+Prijatan vikend
+Hvala za sve
+Ne brini
+Kako da stignem do…?
+Ima li apoteka u blizini?
+Mogu li dobiti malo vode?

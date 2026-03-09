@@ -1,0 +1,101 @@
+Hyvää huomenta
+Hyvää päivää
+Hyvää iltaa
+Hyvää yötä
+Hei
+Moi
+Miten menee
+Miten voit
+Kuinka voitte
+Kiitos paljon
+Paljon kiitoksia avusta
+Ole hyvä
+Anteeksi
+Anteeksi paljon
+Ei se mitään
+Ei kestä
+Hauska tavata
+Hauska tavata teidät
+Näkemiin
+Heippa
+Nähdään myöhemmin
+Mikä sinun nimesi on
+Minun nimeni on Anna
+Minun nimeni on Matti
+Mistä olet kotoisin
+Olen kotoisin Suomesta
+Mukava tavata
+Puhutko englantia
+En ymmärrä
+Ymmärrän
+Voisitko toistaa
+Puhu hitaammin, kiitos
+Mitä tämä tarkoittaa
+Paljonko tämä maksaa
+Voinko maksaa kortilla
+Missä on WC
+Missä on bussipysäkki
+Missä on rautatieasema
+Kuinka pääsen keskustaan
+Onko se kaukana
+Paljonko kello on
+Voitko auttaa minua
+Tarvitsen apua
+Eksyin
+Voitko näyttää kartalla
+Onko tämä paikka vapaa
+Voinko istua tähän
+Onko täällä Wi-Fi
+Mikä on Wi-Fin salasana
+Haluaisin kahvin
+Haluaisin teen
+Haluaisin vettä
+Saanko ruokalistan
+Saanko laskun
+Tämä on todella maukasta
+En syö lihaa
+Olen allerginen pähkinöille
+Onko tämä tulista
+Onko teillä kasvisruokaa
+Voinko varata pöydän
+Mihin aikaan varaus on
+Minulla on varaus
+Haluaisin huoneen yhdeksi yöksi
+Haluaisin huoneen kahdeksi yöksi
+Sisältyykö aamiainen hintaan
+Voinko maksaa nyt
+Voinko maksaa myöhemmin
+Tarvitsen taksin
+Pysähtykää tähän
+Ajakaa suoraan
+Kääntykää vasemmalle
+Kääntykää oikealle
+Kuinka kauan matka kestää
+Onko tiellä ruuhkaa
+Saanko kuitin
+Saanko laskun
+Voinko kokeilla
+Voinko sovittaa tätä
+Onko teillä eri koko
+Onko teillä eri väri
+Tämä on liian kallista
+Voitteko antaa alennusta
+Otanko tämän
+En ota tätä
+Tämä näyttää hyvältä
+Tämä on todella kaunista
+Pidän tästä paljon
+Tämä ei ole minulle
+Minun täytyy lähteä nyt
+Nähdään myöhemmin
+Mukavaa päivänjatkoa
+Mukavaa illanjatkoa
+Hyvää ruokahalua
+Kippis
+Onnea
+Onnittelut
+Parhain terveisin
+Pidä huolta
+Mukavaa viikonloppua
+Kiitos kaikesta
+Älä huoli

@@ -1,0 +1,101 @@
+Tere hommikust
+Tere päevast
+Tere õhtust
+Head ööd
+Tere
+Hei
+Kuidas sul läheb?
+Kuidas teil läheb?
+Suur tänu
+Tänan abi eest
+Pole tänu väärt
+Vabandust
+Mul on kahju
+Pole probleem
+Pole midagi
+Hea meelega
+Rõõm teid kohata
+Rõõm teid kohata (ametlik)
+Head aega
+Nägemist
+Kohtumiseni hiljem
+Mis su nimi on?
+Minu nimi on Anna
+Minu nimi on Jaan
+Kust sa pärit oled?
+Ma olen Eestist
+Rõõm teid kohata
+Kas sa räägid inglise keelt?
+Ma ei saa aru
+Ma saan aru
+Kas sa saad korrata?
+Räägi aeglasemalt, palun
+Mida see tähendab?
+Kui palju see maksab?
+Kas ma saan maksta kaardiga?
+Kus on tualett?
+Kus on bussipeatus?
+Kus on raudteejaam?
+Kuidas ma jõuan keskust?
+Kas see on kaugel?
+Mis kell on?
+Kas sa saad mind aidata?
+Mul on abi vaja
+Ma olen eksinud
+Kas sa saad näidata kaardil?
+Kas see koht on vaba?
+Kas ma võin siin istuda?
+Kas siin on Wi-Fi?
+Mis on Wi-Fi parool?
+Ma sooviksin kohvi
+Ma sooviksin teed
+Ma sooviksin vett
+Kas ma saaksin menüü?
+Kas ma saaksin arve?
+See on väga maitsev
+Ma ei söö liha
+Mul on pähkliallergia
+Kas see on vürtsikas?
+Kas teil on taimetoitu?
+Kas ma saan lauda broneerida?
+Mis kell on broneering?
+Mul on broneering
+Ma sooviksin tuba üheks ööks
+Ma sooviksin tuba kaheks ööks
+Kas hommikusöök on hinna sees?
+Kas ma saan maksta kohe?
+Kas ma saan maksta hiljem?
+Mul on vaja taksot
+Peatu siin, palun
+Mine otse
+Pööra vasakule
+Pööra paremale
+Kui kaua reis kestab?
+Kas teel on liiklusummik?
+Kas ma saan kviitungi?
+Kas ma saan arve?
+Kas ma võin seda proovida?
+Kas ma võin selle selga proovida?
+Kas on teine suurus?
+Kas on teine värv?
+See on liiga kallis
+Kas saate allahindlust teha?
+Ma võtan selle
+Ma ei võta seda
+See näeb hea välja
+See on väga ilus
+Mulle meeldib see
+See ei sobi mulle
+Ma pean nüüd minema
+Kohtumiseni hiljem
+Head päeva
+Head õhtut
+Head isu
+Terviseks
+Palju edu
+Palju õnne
+Kõike head
+Hoolitse enda eest
+Head nädalavahetust
+Tänan kõige eest
+Ära muretse
