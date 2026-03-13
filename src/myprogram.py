@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import json
+import unicodedata
 import collections
 import glob
 import itertools
@@ -31,7 +32,7 @@ _INTERP_RAW = {
 _total = sum(_INTERP_RAW.values())
 INTERP_WEIGHTS = {k: v / _total for k, v in _INTERP_RAW.items()}
 
-# Minimum count thresholds per order
+# Minimum count thresholds per order (lower high-order = keep more rare scripts)
 MIN_COUNTS = {
     1: 0,  # Keep all unigrams (character frequencies)
     2: 5,  # Bigrams: need at least 5 occurrences
@@ -39,10 +40,10 @@ MIN_COUNTS = {
     4: 3,
     5: 3,
     6: 3,
-    7: 3,
-    8: 3,
-    9: 3,
-    10: 3,
+    7: 2,  # Keep more contexts for Vietnamese, Turkic, etc.
+    8: 2,
+    9: 2,
+    10: 2,
 }
 
 
@@ -92,6 +93,7 @@ class MyModel:
                 print(f"  {lang}: {len(text):,} chars")
 
         combined = "\n".join(all_text)
+        combined = unicodedata.normalize("NFKC", combined)
         print(f"Total: {total_chars:,} chars ({total_chars / 1_000_000:.1f} MB)")
         return combined
 
@@ -521,7 +523,7 @@ class MyModel:
         Predict top-3 next characters using interpolated n-gram probabilities:
         score(c) = sum over orders k of lambda_k * P_k(c|context_k).
         """
-        text = text.lower()
+        text = unicodedata.normalize("NFKC", text.lower())
         scores = {}
 
         for order in range(1, self.max_order + 1):
