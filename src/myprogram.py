@@ -14,7 +14,7 @@ from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 # Training Configuration
 # ============================================================
 
-MAX_ORDER = 9  # Up to 10-grams (9 chars of context → predict 10th)
+MAX_ORDER = 9
 
 # Interpolation weights: P(c|text) = sum over orders k of lambda_k * P_k(c|context_k).
 # Higher orders get more weight; sum must be 1.
@@ -28,6 +28,7 @@ _INTERP_RAW = {
     7: 0.20,
     8: 0.15,
     9: 0.10,
+    10: 0.10,
 }
 _total = sum(_INTERP_RAW.values())
 INTERP_WEIGHTS = {k: v / _total for k, v in _INTERP_RAW.items()}
@@ -40,10 +41,9 @@ MIN_COUNTS = {
     4: 3,
     5: 3,
     6: 3,
-    7: 2,  # Keep more contexts for Vietnamese, Turkic, etc.
-    8: 2,
-    9: 2,
-    10: 2,
+    7: 3,
+    8: 3,
+    9: 3,
 }
 
 
@@ -86,16 +86,52 @@ class MyModel:
 
         for filepath in sorted(text_files):
             lang = os.path.basename(filepath).replace(".txt", "")
+            print(f"  {lang}: ", end="", flush=True)
             with open(filepath, "r", encoding="utf-8") as f:
                 text = f.read()
-                all_text.append(text)
-                total_chars += len(text)
-                print(f"  {lang}: {len(text):,} chars")
+            text = unicodedata.normalize("NFKC", text)
+            all_text.append(text)
+            total_chars += len(text)
+            print(f"{len(text):,} chars", flush=True)
 
+        print("Joining corpus...", flush=True)
         combined = "\n".join(all_text)
-        combined = unicodedata.normalize("NFKC", combined)
         print(f"Total: {total_chars:,} chars ({total_chars / 1_000_000:.1f} MB)")
         return combined
+
+    @classmethod
+    def load_training_data_split(cls, data_dir, val_ratio=0.2):
+        """
+        Load all .txt files and split per-file into train/val so every language
+        contributes to training. Returns (train_text, val_text).
+        (Fixes Chinese ~1% when zh was last file and ended up entirely in val.)
+        """
+        text_files = sorted(glob.glob(os.path.join(data_dir, "*.txt")))
+        if not text_files:
+            raise ValueError(f"No .txt files found in {data_dir}")
+        print(f"Loading text from {len(text_files)} files (per-file {1-val_ratio:.0%} train / {val_ratio:.0%} val)...")
+        train_parts = []
+        val_parts = []
+        total_train = 0
+        total_val = 0
+        for filepath in text_files:
+            lang = os.path.basename(filepath).replace(".txt", "")
+            print(f"  {lang}: ", end="", flush=True)
+            with open(filepath, "r", encoding="utf-8") as f:
+                text = f.read()
+            text = unicodedata.normalize("NFKC", text)
+            idx = int(len(text) * (1 - val_ratio))
+            train_part = text[:idx]
+            val_part = text[idx:]
+            train_parts.append(train_part)
+            val_parts.append(val_part)
+            total_train += len(train_part)
+            total_val += len(val_part)
+            print(f"{len(train_part):,} train, {len(val_part):,} val", flush=True)
+        train_text = "\n".join(train_parts)
+        val_text = "\n".join(val_parts)
+        print(f"Total: {total_train:,} train chars, {total_val:,} val chars")
+        return train_text, val_text
 
     @classmethod
     def load_test_data(cls, fname):
@@ -164,9 +200,9 @@ class MyModel:
         low_orders = [1, 2]
         mid_orders = [3, 4, 5]
         high_orders = list(range(6, max_order + 1))
-        # Coarse grid: low in [0.02, 0.05, 0.10], mid in [0.20, 0.30, 0.40], high = 1 - low - mid
-        low_vals = [0.02, 0.05, 0.10]
-        mid_vals = [0.20, 0.30, 0.40]
+        # Finer grid: more low/mid points to find better weights
+        low_vals = [0.02, 0.04, 0.06, 0.08, 0.10]
+        mid_vals = [0.15, 0.20, 0.25, 0.30, 0.35, 0.40]
         for w_low, w_mid in itertools.product(low_vals, mid_vals):
             w_high = 1.0 - w_low - w_mid
             if w_high < 0.05:
@@ -247,9 +283,12 @@ class MyModel:
 
         return result
 
+    TOP_NEXT = 10  # Store top-K next chars per context; prediction still returns top-3 by interpolated score
+
     @staticmethod
     def _build_top3_for_order(counter, min_count, verbose=True):
-        """From an n-gram counter, extract top-3 next chars per context with normalized probs."""
+        """From an n-gram counter, extract top-K next chars per context with normalized probs."""
+        k = MyModel.TOP_NEXT
         context_chars = collections.defaultdict(list)
         for ngram, count in counter.items():
             if count >= min_count:
@@ -260,12 +299,12 @@ class MyModel:
         order_model = {}
         for context, char_counts in context_chars.items():
             char_counts.sort(reverse=True)
-            top3_counts = char_counts[:3]
-            total = sum(c for c, _ in top3_counts)
+            topk_counts = char_counts[:k]
+            total = sum(c for c, _ in topk_counts)
             if total <= 0:
                 continue
             order_model[context] = [
-                (ch, cnt / total) for cnt, ch in top3_counts
+                (ch, cnt / total) for cnt, ch in topk_counts
             ]
 
         if verbose:
@@ -609,18 +648,16 @@ if __name__ == "__main__":
 
         print("Loading training data")
         print("=" * 60)
-        print("STEP 1: Loading text files")
+        print("STEP 1: Loading text files (per-file train/val split)")
         print("=" * 60)
-        full_text = MyModel.load_training_data(args.data_dir)
-        split_idx = int(len(full_text) * (1 - args.val_ratio))
-        train_text = full_text[:split_idx]
-        val_text = full_text[split_idx:]
-        print(f"Split: {len(train_text):,} train chars, {len(val_text):,} validation chars")
+        train_text, val_text = MyModel.load_training_data_split(
+            args.data_dir, val_ratio=args.val_ratio
+        )
         print()
 
-        print("Training n-gram model")
+        print("Training n-gram model (order 9 first; each order may take several minutes)...", flush=True)
         model.run_train(train_text, args.work_dir)
-        del train_text, full_text
+        del train_text
 
         print("Saving model")
         print("=" * 60)

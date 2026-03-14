@@ -31,15 +31,15 @@ LANGUAGE_CONFIGS = {
     "sv": (f"{SNAPSHOT}.sv", 3_000_000),
     "nl": (f"{SNAPSHOT}.nl", 5_000_000),
     "es": (f"{SNAPSHOT}.es", 5_000_000),
-    "ru": (f"{SNAPSHOT}.ru", 5_000_000),
+    "ru": (f"{SNAPSHOT}.ru", 8_000_000),   # example2 has Russian
     "it": (f"{SNAPSHOT}.it", 5_000_000),
     "pl": (f"{SNAPSHOT}.pl", 5_000_000),
     "arz": (f"{SNAPSHOT}.arz", 3_000_000),
     "zh": (f"{SNAPSHOT}.zh", 10_000_000),
     "ja": (f"{SNAPSHOT}.ja", 10_000_000),
-    "uk": (f"{SNAPSHOT}.uk", 8_000_000),
-    "ar": (f"{SNAPSHOT}.ar", 5_000_000),
-    "vi": (f"{SNAPSHOT}.vi", 8_000_000),
+    "uk": (f"{SNAPSHOT}.uk", 10_000_000),
+    "ar": (f"{SNAPSHOT}.ar", 8_000_000),   # example2 has lots of Arabic
+    "vi": (f"{SNAPSHOT}.vi", 10_000_000),
     "war": (f"{SNAPSHOT}.war", 3_000_000),
     "pt": (f"{SNAPSHOT}.pt", 5_000_000),
     "fa": (f"{SNAPSHOT}.fa", 3_000_000),
@@ -51,7 +51,7 @@ LANGUAGE_CONFIGS = {
     "no": (f"{SNAPSHOT}.no", 4_000_000),
     "tr": (f"{SNAPSHOT}.tr", 8_000_000),
     "fi": (f"{SNAPSHOT}.fi", 4_000_000),
-    "tt": (f"{SNAPSHOT}.tt", 6_000_000),
+    "tt": (f"{SNAPSHOT}.tt", 10_000_000),
     "cs": (f"{SNAPSHOT}.cs", 4_000_000),
     "hu": (f"{SNAPSHOT}.hu", 4_000_000),
     "ro": (f"{SNAPSHOT}.ro", 4_000_000),
@@ -61,7 +61,7 @@ LANGUAGE_CONFIGS = {
     "zh-min-nan": (f"{SNAPSHOT}.zh-min-nan", 3_000_000),
     "he": (f"{SNAPSHOT}.he", 5_000_000),
     "eo": (f"{SNAPSHOT}.eo", 3_000_000),
-    "uz": (f"{SNAPSHOT}.uz", 6_000_000),
+    "uz": (f"{SNAPSHOT}.uz", 10_000_000),
     "hy": (f"{SNAPSHOT}.hy", 3_000_000),
     "da": (f"{SNAPSHOT}.da", 4_000_000),
     "bg": (f"{SNAPSHOT}.bg", 4_000_000),
@@ -153,6 +153,19 @@ def download_all(output_dir):
 
     print(f"\nTotal time: {elapsed:.1f}s ({elapsed / 60:.1f}m)")
     print(f"Files saved to: {output_dir}/")
+
+    # Convert zh to Simplified so it matches tests/chinese (otherwise Chinese accuracy stays ~1%)
+    zh_path = os.path.join(output_dir, "zh.txt")
+    if os.path.exists(zh_path):
+        try:
+            from opencc import OpenCC
+            print("\nConverting zh.txt to Simplified Chinese...")
+            text = open(zh_path, encoding="utf-8").read()
+            text = OpenCC("t2s").convert(text)
+            open(zh_path, "w", encoding="utf-8").write(text)
+            print("Done. zh.txt is now Simplified.")
+        except ImportError:
+            print("\nWarning: pip install opencc-python-reimplemented, then run: python src/convert_zh_to_simplified.py")
 
 
 def main(output_dir=None):
