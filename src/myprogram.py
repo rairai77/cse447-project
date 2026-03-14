@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import json
+import random
 import unicodedata
 import collections
 import glob
@@ -33,6 +34,14 @@ _INTERP_RAW = {
 _total = sum(_INTERP_RAW.values())
 INTERP_WEIGHTS = {k: v / _total for k, v in _INTERP_RAW.items()}
 
+# Within-order smoothing: blend in (k-1)-gram (0 = off; 0.05–0.1 may help without diluting)
+SMOOTH_ALPHA = 0.0  # light smoothing
+# Unigram floor (0 = off). Was 0.02 but hurt Chinese/example2.
+UNIGRAM_FLOOR_FRAC = 0.0
+UNIGRAM_FLOOR_TOP = 25
+# Max-over-orders boost (0 = off). Was 0.08 but hurt overall.
+MAX_ORDER_BOOST_GAMMA = 0.03
+
 # Minimum count thresholds per order (lower high-order = keep more rare scripts)
 MIN_COUNTS = {
     1: 0,  # Keep all unigrams (character frequencies)
@@ -40,8 +49,8 @@ MIN_COUNTS = {
     3: 5,
     4: 3,
     5: 3,
-    6: 3,
-    7: 3,
+    6: 2,  # Lower to keep more rare scripts / example2-style contexts
+    7: 2,
     8: 3,
     9: 3,
 }
@@ -188,45 +197,99 @@ class MyModel:
                 correct += 1
         return correct / len(pairs)
 
-    def train_interp_weights(self, val_pairs, verbose=True):
+    def _set_weights_from_bins(self, w_low, w_mid, w_high, low_orders, mid_orders, high_orders, max_order):
+        """Set interp_weights from bin totals (low/mid/high) and renormalize."""
+        weights = {}
+        n_low, n_mid, n_high = len(low_orders), len(mid_orders), len(high_orders)
+        for k in low_orders:
+            weights[k] = w_low / n_low
+        for k in mid_orders:
+            weights[k] = w_mid / n_mid
+        for k in high_orders:
+            weights[k] = w_high / n_high
+        weights = {k: weights.get(k, 0) for k in range(1, max_order + 1)}
+        total = sum(weights.values())
+        if total > 0:
+            weights = {k: v / total for k, v in weights.items()}
+        self.interp_weights = weights
+
+    def train_interp_weights(self, val_pairs, verbose=True, extra_fine=False):
         """
         Grid search over interpolation weights to maximize top-3 accuracy on val_pairs.
+        Uses coarse grid, then fine (stage 2), then optional extra-fine (stage 3) when extra_fine=True.
         Returns best weight dict (order -> float).
         """
         best_acc = -1.0
         best_weights = dict(INTERP_WEIGHTS)
-        # Bins: orders 1-2 (low), 3-5 (mid), 6-max_order (high)
         max_order = self.max_order
         low_orders = [1, 2]
         mid_orders = [3, 4, 5]
         high_orders = list(range(6, max_order + 1))
-        # Finer grid: more low/mid points to find better weights
-        low_vals = [0.02, 0.04, 0.06, 0.08, 0.10]
-        mid_vals = [0.15, 0.20, 0.25, 0.30, 0.35, 0.40]
+
+        # Stage 1: Coarse grid
+        low_vals = [0.02, 0.04, 0.06, 0.08, 0.10, 0.12]
+        mid_vals = [0.12, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45]
+        best_low, best_mid = 0.06, 0.25
+        coarse_count = 0
         for w_low, w_mid in itertools.product(low_vals, mid_vals):
             w_high = 1.0 - w_low - w_mid
             if w_high < 0.05:
                 continue
-            weights = {}
-            n_low, n_mid, n_high = len(low_orders), len(mid_orders), len(high_orders)
-            for k in low_orders:
-                weights[k] = w_low / n_low
-            for k in mid_orders:
-                weights[k] = w_mid / n_mid
-            for k in high_orders:
-                weights[k] = w_high / n_high
-            # Restrict to orders present in model and renormalize
-            weights = {k: weights.get(k, 0) for k in range(1, max_order + 1)}
-            total = sum(weights.values())
-            if total > 0:
-                weights = {k: v / total for k, v in weights.items()}
-            self.interp_weights = weights
+            coarse_count += 1
+            if verbose and coarse_count % 5 == 0:
+                print(f"  Coarse grid progress: {coarse_count} / ~48 points...", flush=True)
+            self._set_weights_from_bins(w_low, w_mid, w_high, low_orders, mid_orders, high_orders, max_order)
             acc = self.evaluate_top3_accuracy(val_pairs)
             if acc > best_acc:
                 best_acc = acc
-                best_weights = dict(weights)
+                best_weights = dict(self.interp_weights)
+                best_low, best_mid = w_low, w_mid
                 if verbose:
                     print(f"  New best top-3 acc: {acc:.4f} (low={w_low}, mid={w_mid}, high={w_high:.2f})")
+
+        # Stage 2: Fine grid around best (step 0.01)
+        if verbose:
+            print("  Fine search around best (low={}, mid={})...".format(best_low, best_mid))
+        low_fine = sorted(set(round(best_low + d, 2) for d in (-0.02, -0.01, 0, 0.01, 0.02) if 0 <= best_low + d <= 0.20))
+        mid_fine = sorted(set(round(best_mid + d, 2) for d in (-0.02, -0.01, 0, 0.01, 0.02) if 0 <= best_mid + d <= 0.55))
+        fine_count = 0
+        for w_low in low_fine:
+            for w_mid in mid_fine:
+                w_high = 1.0 - w_low - w_mid
+                if w_high < 0.05:
+                    continue
+                fine_count += 1
+                if verbose and fine_count % 5 == 0:
+                    print(f"  Fine grid progress: {fine_count} points...", flush=True)
+                self._set_weights_from_bins(w_low, w_mid, w_high, low_orders, mid_orders, high_orders, max_order)
+                acc = self.evaluate_top3_accuracy(val_pairs)
+                if acc > best_acc:
+                    best_acc = acc
+                    best_weights = dict(self.interp_weights)
+                    best_low, best_mid = w_low, w_mid
+                    if verbose:
+                        print(f"  New best top-3 acc: {acc:.4f} (low={w_low}, mid={w_mid}, high={w_high:.2f})")
+
+        # Stage 3 (optional): Extra-fine grid (step 0.005) for example2 / max accuracy
+        if extra_fine:
+            if verbose:
+                print("  Extra-fine search (step 0.005)...")
+            for d_low in (-0.01, -0.005, 0, 0.005, 0.01):
+                for d_mid in (-0.01, -0.005, 0, 0.005, 0.01):
+                    w_low = round(best_low + d_low, 3)
+                    w_mid = round(best_mid + d_mid, 3)
+                    w_high = 1.0 - w_low - w_mid
+                    if w_high < 0.05 or w_low < 0 or w_mid < 0:
+                        continue
+                    self._set_weights_from_bins(w_low, w_mid, w_high, low_orders, mid_orders, high_orders, max_order)
+                    acc = self.evaluate_top3_accuracy(val_pairs)
+                    if acc > best_acc:
+                        best_acc = acc
+                        best_weights = dict(self.interp_weights)
+                        best_low, best_mid = w_low, w_mid
+                        if verbose:
+                            print(f"  New best top-3 acc: {acc:.4f} (low={w_low}, mid={w_mid}, high={w_high:.3f})")
+
         self.interp_weights = best_weights
         return best_weights
 
@@ -283,7 +346,7 @@ class MyModel:
 
         return result
 
-    TOP_NEXT = 10  # Store top-K next chars per context; prediction still returns top-3 by interpolated score
+    TOP_NEXT = 20  # Store top-K next chars per context; prediction still returns top-3 by interpolated score
 
     @staticmethod
     def _build_top3_for_order(counter, min_count, verbose=True):
@@ -560,10 +623,17 @@ class MyModel:
     def predict_next_chars(self, text):
         """
         Predict top-3 next characters using interpolated n-gram probabilities:
-        score(c) = sum over orders k of lambda_k * P_k(c|context_k).
+        - Linear: score_linear(c) = sum over k of lambda_k * P_smooth_k(c).
+        - Max boost: score_max(c) = max over k of lambda_k * P_smooth_k(c).
+        - Final: score(c) = (1-gamma)*score_linear(c) + gamma*score_max(c).
+        - Unigram floor: score(c) >= UNIGRAM_FLOOR_FRAC * unigram(c) for top unigrams.
+        - Tie-break: same score -> prefer higher unigram probability.
         """
         text = unicodedata.normalize("NFKC", text.lower())
-        scores = {}
+        scores_linear = {}
+        scores_max = {}
+        alpha = SMOOTH_ALPHA
+        gamma = MAX_ORDER_BOOST_GAMMA
 
         for order in range(1, self.max_order + 1):
             context_len = order - 1
@@ -577,15 +647,52 @@ class MyModel:
             lk = self.interp_weights.get(order, 0.0)
             if lk <= 0:
                 continue
-            for ch, p in dist:
+
+            dist_km1 = None
+            if order >= 2:
+                ctx_km1 = context[:-1] if len(context) > 0 else ""
+                dist_km1 = self._get_context_distribution(order - 1, ctx_km1)
+            p_km1 = dict(dist_km1) if dist_km1 else {}
+
+            all_chars = set(c for c, _ in dist) | set(p_km1)
+            for ch in all_chars:
                 if ch in self.INVALID_PRED_CHARS:
                     continue
-                scores[ch] = scores.get(ch, 0.0) + lk * p
+                p_k = next((p for c, p in dist if c == ch), 0.0)
+                p_prev = p_km1.get(ch, 0.0)
+                p_smooth = (1.0 - alpha) * p_k + alpha * p_prev
+                if p_smooth > 0:
+                    contrib = lk * p_smooth
+                    scores_linear[ch] = scores_linear.get(ch, 0.0) + contrib
+                    scores_max[ch] = max(scores_max.get(ch, 0.0), contrib)
+
+        # Combine linear + max boost
+        all_c = set(scores_linear) | set(scores_max)
+        scores = {}
+        for ch in all_c:
+            lin = scores_linear.get(ch, 0.0)
+            mx = scores_max.get(ch, 0.0)
+            scores[ch] = (1.0 - gamma) * lin + gamma * mx
 
         if not scores:
             return self._get_fallback()
 
-        top3 = sorted(scores.items(), key=lambda x: -x[1])[:3]
+        # Unigram floor and tie-break: get unigram distribution once
+        unigram_dist = self._get_context_distribution(1, "")
+        unigram_p = dict(unigram_dist) if unigram_dist else {}
+        if unigram_dist:
+            unigram_top = sorted(unigram_dist, key=lambda x: -x[1])[:UNIGRAM_FLOOR_TOP]
+            for ch, p in unigram_top:
+                if ch in self.INVALID_PRED_CHARS:
+                    continue
+                floor = UNIGRAM_FLOOR_FRAC * p
+                scores[ch] = max(scores.get(ch, 0.0), floor)
+
+        # Tie-break by unigram probability (prefer more frequent char)
+        def sort_key(item):
+            ch, sc = item
+            return (-sc, -(unigram_p.get(ch, 0.0)))
+        top3 = sorted(scores.items(), key=sort_key)[:3]
         return "".join(c for c, _ in top3)
 
     def _get_fallback(self):
@@ -674,10 +781,18 @@ if __name__ == "__main__":
         del val_text
         print(f"Validation pairs: {len(val_pairs):,}")
         if val_pairs:
+            # Use at most 50k pairs for grid search so STEP 4 finishes in reasonable time
+            max_tune = 50000
+            if len(val_pairs) > max_tune:
+                tune_pairs = random.sample(val_pairs, max_tune)
+                print(f"Using {len(tune_pairs):,} pairs for grid search (sampled from {len(val_pairs):,})")
+            else:
+                tune_pairs = val_pairs
             model = MyModel.load(args.work_dir)
-            best_weights = model.train_interp_weights(val_pairs)
+            best_weights = model.train_interp_weights(tune_pairs)
             MyModel.save_interp_weights(args.work_dir, best_weights)
-            print(f"Best top-3 accuracy: {model.evaluate_top3_accuracy(val_pairs):.4f}")
+            full_acc = model.evaluate_top3_accuracy(val_pairs)
+            print(f"Best top-3 accuracy (full val): {full_acc:.4f}")
             print("Saved optimized interp_weights to model DB.")
             model.close()
         else:

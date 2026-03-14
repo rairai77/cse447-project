@@ -9,3 +9,5 @@ pyproject.toml
 .python-version
 data
 uv.lock
+# Trained model (too large for GitHub; train locally)
+work/

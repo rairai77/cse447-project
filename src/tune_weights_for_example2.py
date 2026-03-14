@@ -49,8 +49,8 @@ def main():
 
     print("Loading model...")
     model = MyModel.load(str(WORK_DIR))
-    print("Tuning interpolation weights for example2 (grid search)...")
-    best_weights = model.train_interp_weights(val_pairs, verbose=True)
+    print("Tuning interpolation weights for example2 (grid search + extra-fine)...")
+    best_weights = model.train_interp_weights(val_pairs, verbose=True, extra_fine=True)
     acc = model.evaluate_top3_accuracy(val_pairs)
     print(f"Example2 top-3 accuracy after tuning: {acc:.4f}")
     MyModel.save_interp_weights(str(WORK_DIR), best_weights)
